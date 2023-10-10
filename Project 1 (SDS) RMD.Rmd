@@ -1,0 +1,130 @@
+---
+title: "Videogame Report"
+author: "Annika Godines"
+date: "2023-09-22"
+output:
+  html_document:
+    toc: yes
+    toc_float: yes
+---
+
+```{r echo=FALSE}
+vidgame <- read.csv("Project1_videogames.csv")
+```
+
+
+```{r setup, include=FALSE}
+
+View(vidgame)
+
+library(ggplot2)
+
+library(RColorBrewer)
+
+library(tidyverse)
+
+library(dplyr)
+
+library(kableExtra)
+
+```
+
+
+```{r global_options, echo=FALSE}
+knitr::opts_chunk$set(fig.height=5, fig.width=6, warning=FALSE, tidy=TRUE, tidy.opts=list(width.cutoff=80))
+```
+
+---
+
+### **Question 1: Introduce your dataset and briefly describe the variables it contains, how it was collected, and any relevant background to give your reader context about the variables. Describe which variable is your chosen outcome and which predictors you will be investigating.  Include a picture (with citation) that relates to your analysis.**
+
+This is the [reference](https://corgis-edu.github.io/corgis/csv/video_games/) that was used in this data report. This information was collected by Dr. Joe Cox containing information about the sales and play times of video games during the time between 2004 and 2010. The information provided about a videogame's playtime was extracted from crowd-sourced data on "How Long To Beat".
+
+ 
+My chosen outcome will be review scores and my predicting variables will be ratings, console, and year of release. This report investigates if the Ratings, Console a game was played on, and year of release correlate to their Review Score of a game.  
+
+
+![This image was extracted from The Verge.(https://www.theverge.com/2022/8/2/23288496/us-video-game-spending-npd-second-quarter-2022)](https://duet-cdn.vox-cdn.com/thumbor/0x0:2040x1360/828x552/filters:focal(1020x680:1021x681):format(webp)/cdn.vox-cdn.com/uploads/chorus_asset/file/22236383/acastro_210113_1777_gamingstock_0002.jpg){width=70%}
+
+
+### **Question 2: Describe the distribution of your outcome variable, using the appropriate statistics, and include a univariate graph to display its distribution.**
+
+```{r echo = FALSE, warning = FALSE}
+ggplot(vidgame, aes(x = vidgame$ReviewScore, na.rm = TRUE)) +
+  geom_histogram(binwidth = 0.5, fill = "pink", color = "black") +
+  labs(title = "Videogame Review Score",
+       x = "Videogame Review Score",
+       y = "Frequency") + theme_bw()
+```
+
+The highest data set in this table is `r max(vidgame$ReviewScore)` in `r vidgame[vidgame$ReviewScore== 98, 1]`. The lowest data set in this table is `r min(vidgame$ReviewScore)`, which is held by `r vidgame[vidgame$ReviewScore== 20, 1]`. The median throughout the graph is `r median(vidgame$ReviewScore)`. Many games score averagely while no games score a 100 in review scores. 
+
+### **Question 3: For each of your three predictors, create a relevant graph that shows its relationship with your outcome variable.  Calculate any relevant bivariate statistics and briefly describe the relationships between each predictor and your outcome, referencing your graphs.**
+
+```{r echo = FALSE}
+ggplot(vidgame, aes(x = ReviewScore, fill = Rating)) + labs(title="Review Scores Within Ratings", x="Review Score", y="Frequency") +
+  geom_bar(position = "dodge") + facet_wrap(~Rating)
+```
+
+```{r echo = FALSE}
+rateE <- (vidgame[vidgame$Rating== 'E',])
+rateM <- (vidgame[vidgame$Rating== 'M',])
+rateT <- (vidgame[vidgame$Rating== 'T',])
+```
+
+In the graphs above, there is a minute increase of scores when dealing with videogames rated E and T. Videogames rated E had a median review score of `r round(mean(rateE$ReviewScore))` and T has a median review score of `r round(mean(rateT$ReviewScore))`.The ratings are lower in games rated M at a average median of `r round(mean(rateM$ReviewScore))`. All graphs stay consistant throughout in review scores, showing there is little to no correlation. 
+
+```{r echo = FALSE}
+ggplot(vidgame, aes(x = ReviewScore, fill = Console)) + labs(title="Review Scores Depending on Consoles", x="Review Score", y="Frequency") +
+  geom_bar(position = "dodge") + facet_wrap(~Console)
+```
+
+```{r echo = FALSE}
+
+nintendo_d <-(vidgame[vidgame$Console== 'Nintendo DS',])
+
+nintendo_w <- (vidgame[vidgame$Console== 'Nintendo Wii',])
+
+playstay <- (vidgame[vidgame$Console== 'PlayStation 3',])
+
+sony <- (vidgame[vidgame$Console== 'Sony PSP',])
+
+x360 <- (vidgame[vidgame$Console== 'X360',])
+
+```
+
+As shown in the graphs above, PlayStation 3 and Xbox360 have the highest medians while Nintendo Wii has the lowest median. The mean for Nintendo DS is `r round(mean(nintendo_d$ReviewScore))`, Nintendo Wii has a median of `r round(mean(nintendo_w$ReviewScore))`, PlayStation 3 has a median of `r round(mean(playstay$ReviewScore))`, Sony has a median of `r round(mean(sony$ReviewScore))` and the Xbox 360 had a median of `r round(mean(x360$ReviewScore))`.  It is visible in this comparison that review scores have more correlation to consoles than any other variable but the correlation is still significantly weak. 
+
+```{r echo = FALSE}
+ggplot(vidgame, aes(x = ReviewScore, fill = Year)) + labs(title="Review Scores Throughout the Years", x="Review Score", y="Frequency") +
+  geom_bar(position = "dodge") + facet_wrap(~Year)
+```
+
+```{r echo = FALSE}
+year04 <- (vidgame[vidgame$Year== '2004',])
+year05 <- (vidgame[vidgame$Year== '2005',])
+year06 <- (vidgame[vidgame$Year== '2006',])
+year07 <- (vidgame[vidgame$Year== '2007',])
+year08 <- (vidgame[vidgame$Year== '2008',])
+```
+
+In this graph, it is visible as the years passed by, the review scores were higher as there was more games released. The median review score in 2004 was `r round(mean(year04$ReviewScore))`. In 2005, the median score rose to `r round(mean(year05$ReviewScore))`. In 2006, it decreased to `r round(mean(year06$ReviewScore))`. In 2007, there was a drop in review score median with a median of `r round(mean(year07$ReviewScore))` and in 2008 there was a gradual increase to `r round(mean(year08$ReviewScore))`. This exemplifies review scores are weakly correlated to their year of release. 
+
+
+### **Question 4: Write a conclusion that summarizes your findings and suggests areas for future research. Include all references for your report at the bottom.**
+
+Throughout this report, it became known there is not much correlation between any of the variables in this data set. Most, if not all, had correlations below 0.2, demonstrating the variables chosen were not related to Review Scores or had weak correlation. The Review Score stayed within a margin of 70 to 80 and had the highest score of 98. 
+
+There was a small difference in rating scores when categorized into groups by their ratings. However, there was a notable difference in medians throughout the consoles but they did not stray too far from each other. Despite the review score throughout the years looking drastically different, the reviews stayed consistent throughout the years.  
+
+There should be more research in the correlation between review scores and consoles. Games that could be played in many different consoles perform differently in each and requires different techniques to play at times. Because of this, I think there should be more research between review scores and what console the videogame is being played on. 
+
+This study by Dr. Joe Cox took into account different factors and its correlation to a games success. In this data set, the results consistently show that blockbuster video games are more likely to be released by one of the major publishers for popular hardware platforms. Results also show that games of higher quality are significantly more likely to sell a greater number of units than those of a lower quality.
+
+### **Sources**
+
+This [website](https://bookdown.org/yihui/rmarkdown-cookbook/figure-size.html) was used to figure out how to resize an image. 
+
+The image was extracted from [The Verge](https://www.theverge.com/2022/8/2/23288496/us-video-game-spending-npd-second-quarter-2022)
+
+Go [here](https://researchportal.port.ac.uk/en/publications/what-makes-a-blockbuster-video-game-an-empirical-analysis-of-us-s) to learn more about the data set used in this report! 
